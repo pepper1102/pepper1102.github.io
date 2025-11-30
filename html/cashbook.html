@@ -7,11 +7,26 @@
   <title>出納帳 - MyHomeManager</title>
   <link rel="stylesheet" href="../css/common.css" />
   <link rel="stylesheet" href="../css/cashbook.css" />
+  <!-- Firebase SDK -->
+  <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
+  <!-- Firebase設定と認証 -->
+  <script src="../js/firebase-keys.js"></script>
+  <script src="../js/firebase-config.js"></script>
+  <script defer src="../js/auth.js"></script>
+  <!-- 共通モジュール -->
+  <script defer src="../js/common/error-handler.js"></script>
+  <script defer src="../js/common/utils.js"></script>
+  <script defer src="../js/common/storage.js"></script>
+  <script defer src="../js/common/sidebar.js"></script>
+  <!-- ページ固有のスクリプト -->
+  <script defer src="../js/cashbook.js"></script>
 </head>
 
 <body>
   <header>
-    <button id="sidebar-toggle" class="sidebar-toggle" aria-label="メニュー を開く" aria-expanded="false">☰</button>
+    <button id="sidebar-toggle" class="sidebar-toggle" aria-label="メニューを開く" aria-expanded="false">☰</button>
   </header>
 
   <aside id="sidebar" class="sidebar" aria-hidden="true">
@@ -21,7 +36,7 @@
     </div>
     <nav>
       <ul>
-        <li><a href="top.html">ホーム</a></li>
+        <li><a href="../index.html">ホーム</a></li>
         <li><a href="cashbook.html">出納帳</a></li>
         <li><a href="calendar.html">カレンダー</a></li>
         <li><a href="settings.html">設定</a></li>
@@ -91,7 +106,6 @@
     </section>
   </main>
 
-  <script defer src="../js/cashbook.js"></script>
 </body>
 
 </html>

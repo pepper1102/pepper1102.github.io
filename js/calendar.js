@@ -1,5 +1,5 @@
 // Calendar page logic
-(function() {
+(function () {
   const STORAGE_KEY = 'calendarEvents';
   let events = JSON.parse(localStorage.getItem(STORAGE_KEY)) || [];
   let currentDate = new Date();
@@ -21,7 +21,7 @@
   function renderCalendar() {
     const year = currentDate.getFullYear();
     const month = currentDate.getMonth();
-    
+
     currentMonthEl.textContent = `${year}年 ${monthNames[month]}`;
 
     // Clear grid
@@ -39,7 +39,7 @@
     const firstDay = new Date(year, month, 1);
     const lastDay = new Date(year, month + 1, 0);
     const prevLastDay = new Date(year, month, 0);
-    
+
     const firstDayOfWeek = firstDay.getDay();
     const daysInMonth = lastDay.getDate();
     const daysInPrevMonth = prevLastDay.getDate();
@@ -55,7 +55,7 @@
     for (let day = 1; day <= daysInMonth; day++) {
       const date = new Date(year, month, day);
       const dayEl = createDayElement(day, false, date);
-      
+
       // Check if today
       const today = new Date();
       if (date.toDateString() === today.toDateString()) {
@@ -87,7 +87,7 @@
     // Check for events on this day
     const dateStr = formatDate(date);
     const dayEvents = events.filter(e => e.date === dateStr);
-    
+
     if (dayEvents.length > 0) {
       const eventsContainer = document.createElement('div');
       eventsContainer.className = 'day-events';
@@ -112,7 +112,7 @@
 
   function renderEventsList() {
     eventsList.innerHTML = '';
-    
+
     // Sort events by date
     const sortedEvents = [...events].sort((a, b) => {
       const dateA = new Date(a.date + (a.time ? ' ' + a.time : ''));
@@ -134,33 +134,33 @@
 
     futureEvents.forEach((event, index) => {
       const li = document.createElement('li');
-      
+
       const info = document.createElement('div');
       info.className = 'event-info';
-      
+
       const dateSpan = document.createElement('span');
       dateSpan.className = 'event-date';
       dateSpan.textContent = event.date;
-      
+
       const titleSpan = document.createElement('span');
       titleSpan.className = 'event-title';
       titleSpan.textContent = event.title;
-      
+
       info.appendChild(dateSpan);
       info.appendChild(titleSpan);
-      
+
       if (event.time) {
         const timeSpan = document.createElement('span');
         timeSpan.className = 'event-time';
         timeSpan.textContent = event.time;
         info.appendChild(timeSpan);
       }
-      
+
       const deleteBtn = document.createElement('button');
       deleteBtn.className = 'delete-event-btn';
       deleteBtn.textContent = '削除';
       deleteBtn.onclick = () => deleteEvent(event);
-      
+
       li.appendChild(info);
       li.appendChild(deleteBtn);
       eventsList.appendChild(li);
@@ -187,7 +187,7 @@
 
   addEventForm.addEventListener('submit', (e) => {
     e.preventDefault();
-    
+
     const date = document.getElementById('event-date').value;
     const title = document.getElementById('event-title').value.trim();
     const time = document.getElementById('event-time').value;
@@ -196,42 +196,12 @@
 
     events.push({ date, title, time });
     saveEvents();
-    
+
     addEventForm.reset();
     renderCalendar();
     renderEventsList();
   });
 
-  // Sidebar controls
-  (function() {
-    const sidebar = document.getElementById('sidebar');
-    const toggleBtn = document.getElementById('sidebar-toggle');
-    const closeBtn = document.getElementById('sidebar-close');
-    const overlay = document.getElementById('overlay');
-
-    if (!sidebar || !toggleBtn) return;
-
-    function openSidebar() {
-      sidebar.classList.add('open');
-      sidebar.setAttribute('aria-hidden', 'false');
-      toggleBtn.setAttribute('aria-expanded', 'true');
-      if (overlay) { overlay.hidden = false; requestAnimationFrame(() => overlay.classList.add('visible')); }
-      const firstLink = sidebar.querySelector('nav a'); if (firstLink) firstLink.focus();
-    }
-
-    function closeSidebar() {
-      sidebar.classList.remove('open');
-      sidebar.setAttribute('aria-hidden', 'true');
-      toggleBtn.setAttribute('aria-expanded', 'false');
-      if (overlay) { overlay.classList.remove('visible'); setTimeout(() => overlay.hidden = true, 250); }
-      toggleBtn.focus();
-    }
-
-    toggleBtn.addEventListener('click', function() { if (sidebar.classList.contains('open')) closeSidebar(); else openSidebar(); });
-    if (closeBtn) closeBtn.addEventListener('click', closeSidebar);
-    if (overlay) overlay.addEventListener('click', closeSidebar);
-    document.addEventListener('keydown', function(e) { if (e.key === 'Escape' && sidebar.classList.contains('open')) closeSidebar(); });
-  })();
 
   // Initial render
   renderCalendar();

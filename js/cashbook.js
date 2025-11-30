@@ -1,11 +1,14 @@
-// Cashbook page logic: localStorage-based entries and simple UI
+// Cashbook page logic: Firebase Realtime Database-based entries
 (function () {
   const STORAGE_KEY = 'cashbookEntries';
+  const MIGRATION_KEY = 'migrated_to_firebase';
   const form = document.getElementById('entry-form');
   const tableBody = document.querySelector('#entries-table tbody');
 
-  let entries = JSON.parse(localStorage.getItem(STORAGE_KEY)) || [];
-  let editingIndex = null; // 編集中のインデックス
+  let entries = [];
+  let editingIndex = null;
+  let entriesRef = null; // Firebase参照
+  let currentFamilyId = null; // 現在のFamily ID
 
   // ===== ユーティリティ関数 =====
 
@@ -186,9 +189,33 @@
     updatePersonList();
   }
 
+
   function save() {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(entries));
+    if (!entriesRef) {
+      console.warn('未ログイン: データは保存されません');
+      return;
+    }
+
+    const data = {};
+    entries.forEach(entry => {
+      // 更新日時を更新
+      entry.updatedAt = Date.now();
+      if (!entry.createdBy && window.firebaseAuth.currentUser) {
+        entry.createdBy = window.firebaseAuth.currentUser.uid;
+      }
+      data[entry.id] = entry;
+    });
+
+    entriesRef.set(data)
+      .then(() => {
+        console.log('Firebaseに保存成功');
+      })
+      .catch(error => {
+        console.error('保存エラー:', error);
+        alert('データの保存に失敗しました。もう一度お試しください。');
+      });
   }
+
 
   // ===== インライン編集関連 =====
 
@@ -511,48 +538,88 @@
     });
   }
 
-  // ===== サイドバー制御 =====
 
-  (function () {
-    const sidebar = document.getElementById('sidebar');
-    const toggleBtn = document.getElementById('sidebar-toggle');
-    const closeBtn = document.getElementById('sidebar-close');
-    const overlay = document.getElementById('overlay');
 
-    if (!sidebar || !toggleBtn) return;
+  // ===== LocalStorageからFirebaseへのデータ移行 =====
 
-    function openSidebar() {
-      sidebar.classList.add('open');
-      sidebar.setAttribute('aria-hidden', 'false');
-      toggleBtn.setAttribute('aria-expanded', 'true');
-      if (overlay) { overlay.hidden = false; requestAnimationFrame(() => overlay.classList.add('visible')); }
-      const firstLink = sidebar.querySelector('nav a'); if (firstLink) firstLink.focus();
-    }
-    function closeSidebar() {
-      sidebar.classList.remove('open');
-      sidebar.setAttribute('aria-hidden', 'true');
-      toggleBtn.setAttribute('aria-expanded', 'false');
-      if (overlay) { overlay.classList.remove('visible'); setTimeout(() => overlay.hidden = true, 250); }
-      toggleBtn.focus();
+  async function migrateFromLocalStorage(familyId) {
+    // 既に移行済みか確認
+    if (localStorage.getItem(MIGRATION_KEY)) {
+      console.log('既にFirebaseに移行済みです');
+      return;
     }
 
-    toggleBtn.addEventListener('click', function () { if (sidebar.classList.contains('open')) closeSidebar(); else openSidebar(); });
-    if (closeBtn) closeBtn.addEventListener('click', closeSidebar);
-    if (overlay) overlay.addEventListener('click', closeSidebar);
-    document.addEventListener('keydown', function (e) { if (e.key === 'Escape' && sidebar.classList.contains('open')) closeSidebar(); });
-  })();
+    // LocalStorageからデータ取得
+    const localData = JSON.parse(localStorage.getItem(STORAGE_KEY)) || [];
+
+    if (localData.length > 0) {
+      const confirmed = confirm(
+        `ローカルに保存されている${localData.length}件のデータをクラウドに移行しますか？\n\n移行すると、家族メンバー全員とデータを共有できます。`
+      );
+
+      if (confirmed) {
+        const db = window.firebaseDatabase;
+        const data = {};
+
+        localData.forEach(entry => {
+          if (!entry.id) entry.id = generateId();
+          if (!entry.createdBy) entry.createdBy = window.firebaseAuth.currentUser.uid;
+          if (!entry.updatedAt) entry.updatedAt = Date.now();
+          if (!entry.relatedTo) entry.relatedTo = null;
+          if (entry.hasReturn === undefined) entry.hasReturn = false;
+          data[entry.id] = entry;
+        });
+
+        try {
+          await db.ref(`cashbook/${familyId}`).set(data);
+          console.log('データ移行完了:', localData.length, '件');
+          alert(`${localData.length}件のデータをクラウドに移行しました！`);
+        } catch (error) {
+          console.error('移行エラー:', error);
+          alert('データ移行中にエラーが発生しました: ' + error.message);
+          return; // 移行失敗時はフラグを立てない
+        }
+      }
+    }
+
+    // 移行完了フラグを設定（ユーザーが拒否した場合も設定）
+    localStorage.setItem(MIGRATION_KEY, 'true');
+  }
+
+  // ===== Firebase初期化（ログイン後に呼ばれる） =====
+
+  window.onUserLoggedIn = async function (user, familyId) {
+    console.log('出納帳: ユーザーログイン検知', user.displayName, familyId);
+
+    currentFamilyId = familyId;
+    entriesRef = window.firebaseDatabase.ref(`cashbook/${familyId}`);
+
+    // Firebaseリスナー設定（リアルタイム同期）
+    entriesRef.on('value', (snapshot) => {
+      const data = snapshot.val();
+      entries = data ? Object.values(data) : [];
+
+      // データマイグレーション実行（初回のみ）
+      migrateData();
+
+      render();
+      console.log('Firebaseからデータ取得:', entries.length, '件');
+    });
+
+    // LocalStorageからの移行（初回のみ）
+    await migrateFromLocalStorage(familyId);
+  };
 
   // ===== 初期化 =====
-
-  // データマイグレーション実行
-  migrateData();
 
   // お返しUIの初期化
   initializeReturnUI();
 
-  // 初期レンダリング
-  render();
-
   // 初期表示時に日付フィールドに今日の日付を設定
   setTodayDate();
+
+  // 未ログインの場合はメッセージ表示
+  if (!window.firebaseAuth || !window.firebaseAuth.currentUser) {
+    console.log('未ログイン: Googleでログインしてください');
+  }
 })();
