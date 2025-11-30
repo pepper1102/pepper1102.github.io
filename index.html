@@ -7,6 +7,20 @@
   <title>MyHomeManager</title>
   <link rel="stylesheet" href="css/common.css" />
   <link rel="stylesheet" href="css/top.css" />
+  <!-- Firebase SDK -->
+  <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
+  <!-- Firebase設定と認証 -->
+  <script src="js/firebase-keys.js"></script>
+  <script src="js/firebase-config.js"></script>
+  <script defer src="js/auth.js"></script>
+  <!-- 共通モジュール -->
+  <script defer src="js/common/error-handler.js"></script>
+  <script defer src="js/common/utils.js"></script>
+  <script defer src="js/common/storage.js"></script>
+  <script defer src="js/common/sidebar.js"></script>
+  <!-- ページ固有のスクリプト -->
   <script defer src="js/top.js"></script>
 </head>
 
@@ -14,6 +28,15 @@
   <header>
     <button id="sidebar-toggle" class="sidebar-toggle" aria-label="メニューを開く" aria-expanded="false">☰</button>
     <h1>MyHomeManager</h1>
+
+    <!-- ログインボタン（未ログイン時） -->
+    <button id="login-btn" class="login-btn" style="display:none;">Googleでログイン</button>
+
+    <!-- ユーザー情報（ログイン後） -->
+    <div id="user-info" class="user-info" style="display:none;">
+      <span id="user-name"></span>
+      <button id="logout-btn" class="logout-btn">ログアウト</button>
+    </div>
   </header>
 
   <aside id="sidebar" class="sidebar" aria-hidden="true">
