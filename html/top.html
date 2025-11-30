@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>MyHomeManager</title>
+  <link rel="stylesheet" href="../css/common.css" />
+  <link rel="stylesheet" href="../css/top.css" />
+  <script defer src="../js/top.js"></script>
+</head>
+
+<body>
+  <header>
+    <button id="sidebar-toggle" class="sidebar-toggle" aria-label="メニューを開く" aria-expanded="false">☰</button>
+    <h1>MyHomeManager</h1>
+  </header>
+
+  <aside id="sidebar" class="sidebar" aria-hidden="true">
+    <div class="sidebar-header">
+      <h2>メニュー</h2>
+      <button id="sidebar-close" class="sidebar-close" aria-label="メニューを閉じる">✕</button>
+    </div>
+    <nav>
+      <ul>
+        <li><a href="top.html">ホーム</a></li>
+        <li><a href="cashbook.html">出納帳</a></li>
+        <li><a href="calendar.html">カレンダー</a></li>
+        <li><a href="settings.html">設定</a></li>
+      </ul>
+    </nav>
+  </aside>
+
+  <div id="overlay" class="overlay" hidden></div>
+
+  <main>
+    <h2>今日のタスク</h2>
+    <ul id="task-list"></ul>
+
+    <h2>新しいタスクを追加</h2>
+    <form id="task-form">
+      <input type="text" id="task-title" placeholder="タスク名" required />
+      <select id="task-category">
+        <option value="掃除">掃除</option>
+        <option value="買い物">買い物</option>
+        <option value="修理">修理</option>
+        <option value="その他">その他</option>
+      </select>
+      <button type="submit">追加</button>
+    </form>
+  </main>
+
+</body>
+
+</html>

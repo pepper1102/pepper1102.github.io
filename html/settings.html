@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>設定 - MyHomeManager</title>
+    <link rel="stylesheet" href="../css/common.css" />
+    <link rel="stylesheet" href="../css/settings.css" />
+</head>
+
+<body>
+    <header>
+        <button id="sidebar-toggle" class="sidebar-toggle" aria-label="メニューを開く" aria-expanded="false">☰</button>
+        <h1>設定</h1>
+    </header>
+
+    <aside id="sidebar" class="sidebar" aria-hidden="true">
+        <div class="sidebar-header">
+            <h2>メニュー</h2>
+            <button id="sidebar-close" class="sidebar-close" aria-label="メニューを閉じる">✕</button>
+        </div>
+        <nav>
+            <ul>
+                <li><a href="top.html">ホーム</a></li>
+                <li><a href="cashbook.html">出納帳</a></li>
+                <li><a href="calendar.html">カレンダー</a></li>
+                <li><a href="settings.html">設定</a></li>
+            </ul>
+        </nav>
+    </aside>
+
+    <div id="overlay" class="overlay" hidden></div>
+
+    <main>
+        <section class="settings-section">
+            <h2>アプリケーション設定</h2>
+
+            <div class="setting-group">
+                <h3>表示設定</h3>
+                <div class="setting-item">
+                    <label for="app-name">アプリ名</label>
+                    <input type="text" id="app-name" placeholder="MyHomeManager" />
+                </div>
+                <div class="setting-item">
+                    <label for="theme">テーマ</label>
+                    <select id="theme">
+                        <option value="light">ライト</option>
+                        <option value="dark">ダーク(準備中)</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="setting-group">
+                <h3>通知設定</h3>
+                <div class="setting-item">
+                    <label>
+                        <input type="checkbox" id="enable-notifications" />
+                        通知を有効にする(準備中)
+                    </label>
+                </div>
+                <div class="setting-item">
+                    <label>
+                        <input type="checkbox" id="reminder-events" />
+                        イベントリマインダー(準備中)
+                    </label>
+                </div>
+            </div>
+
+            <div class="setting-group">
+                <h3>データ管理</h3>
+                <div class="setting-item">
+                    <button id="clear-tasks-btn" class="danger-btn">タスクデータを削除</button>
+                    <p class="help-text">すべてのタスクデータが削除されます</p>
+                </div>
+                <div class="setting-item">
+                    <button id="clear-cashbook-btn" class="danger-btn">出納帳データを削除</button>
+                    <p class="help-text">すべての収支データが削除されます</p>
+                </div>
+                <div class="setting-item">
+                    <button id="clear-events-btn" class="danger-btn">カレンダーイベントを削除</button>
+                    <p class="help-text">すべてのイベントデータが削除されます</p>
+                </div>
+                <div class="setting-item">
+                    <button id="clear-all-btn" class="danger-btn">すべてのデータを削除</button>
+                    <p class="help-text">アプリのすべてのデータが削除されます</p>
+                </div>
+            </div>
+
+            <div class="setting-group">
+                <h3>アプリケーション情報</h3>
+                <div class="info-item">
+                    <span class="info-label">バージョン:</span>
+                    <span class="info-value">1.0.0</span>
+                </div>
+                <div class="info-item">
+                    <span class="info-label">最終更新:</span>
+                    <span class="info-value">2025年11月23日</span>
+                </div>
+            </div>
+
+            <div class="save-section">
+                <button id="save-settings-btn" class="save-btn">設定を保存</button>
+            </div>
+        </section>
+    </main>
+
+    <script defer src="../js/settings.js"></script>
+</body>
+
+</html>

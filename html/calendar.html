@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>カレンダー - MyHomeManager</title>
+    <link rel="stylesheet" href="../css/common.css" />
+    <link rel="stylesheet" href="../css/calendar.css" />
+</head>
+
+<body>
+    <header>
+        <button id="sidebar-toggle" class="sidebar-toggle" aria-label="メニューを開く" aria-expanded="false">☰</button>
+        <h1>カレンダー</h1>
+    </header>
+
+    <aside id="sidebar" class="sidebar" aria-hidden="true">
+        <div class="sidebar-header">
+            <h2>メニュー</h2>
+            <button id="sidebar-close" class="sidebar-close" aria-label="メニューを閉じる">✕</button>
+        </div>
+        <nav>
+            <ul>
+                <li><a href="top.html">ホーム</a></li>
+                <li><a href="cashbook.html">出納帳</a></li>
+                <li><a href="calendar.html">カレンダー</a></li>
+                <li><a href="settings.html">設定</a></li>
+            </ul>
+        </nav>
+    </aside>
+
+    <div id="overlay" class="overlay" hidden></div>
+
+    <main>
+        <section class="calendar-section">
+            <div class="calendar-header">
+                <button id="prev-month" class="nav-btn">◀</button>
+                <h2 id="current-month"></h2>
+                <button id="next-month" class="nav-btn">▶</button>
+            </div>
+
+            <div class="calendar-grid" id="calendar-grid"></div>
+
+            <div class="event-form">
+                <h3>イベントを追加</h3>
+                <form id="add-event-form">
+                    <input type="date" id="event-date" required />
+                    <input type="text" id="event-title" placeholder="イベント名" required />
+                    <input type="time" id="event-time" />
+                    <button type="submit">追加</button>
+                </form>
+            </div>
+
+            <div class="events-list">
+                <h3>今後のイベント</h3>
+                <ul id="events-list"></ul>
+            </div>
+        </section>
+    </main>
+
+    <script defer src="../js/calendar.js"></script>
+</body>
+
+</html>

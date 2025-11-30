@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>出納帳 - MyHomeManager</title>
+  <link rel="stylesheet" href="../css/common.css" />
+  <link rel="stylesheet" href="../css/cashbook.css" />
+</head>
+
+<body>
+  <header>
+    <button id="sidebar-toggle" class="sidebar-toggle" aria-label="メニュー を開く" aria-expanded="false">☰</button>
+  </header>
+
+  <aside id="sidebar" class="sidebar" aria-hidden="true">
+    <div class="sidebar-header">
+      <h2>メニュー</h2>
+      <button id="sidebar-close" class="sidebar-close" aria-label="メニューを閉じる">✕</button>
+    </div>
+    <nav>
+      <ul>
+        <li><a href="top.html">ホーム</a></li>
+        <li><a href="cashbook.html">出納帳</a></li>
+        <li><a href="calendar.html">カレンダー</a></li>
+        <li><a href="settings.html">設定</a></li>
+      </ul>
+    </nav>
+  </aside>
+
+  <div id="overlay" class="overlay" hidden></div>
+
+  <main>
+    <section class="cashbook">
+      <h2>出納帳</h2>
+
+      <div class="data-actions">
+        <button id="export-btn" class="action-btn">📥 CSVエクスポート</button>
+        <button id="import-btn" class="action-btn">📤 CSVインポート</button>
+        <input type="file" id="import-file" accept=".csv" style="display: none;" />
+      </div>
+
+      <form id="entry-form" class="entry-form">
+        <input type="date" id="entry-date" required />
+        <input type="number" id="entry-amount" placeholder="金額" step="0.01" required />
+        <input type="text" id="entry-person" placeholder="相手の名前" list="person-list" required />
+        <datalist id="person-list">
+          <!-- 既存の名前がJavaScriptで動的に追加されます -->
+        </datalist>
+        <select id="entry-type">
+          <option value="香典">香典</option>
+          <option value="お祝い">お祝い</option>
+          <option value="お見舞い">お見舞い</option>
+          <option value="お年玉">お年玉</option>
+          <option value="お礼">お礼</option>
+          <option value="お返し">お返し</option>
+          <option value="その他">その他</option>
+        </select>
+
+        <!-- お返し関連セクション -->
+        <div id="return-section" class="return-section" style="display: none;">
+          <label>
+            <input type="checkbox" id="is-return" />
+            これは「お祝い/お見舞い」へのお返しです
+          </label>
+          <div id="related-select-wrapper" style="display: none;">
+            <label for="related-entry">関連するお祝い/お見舞い:</label>
+            <select id="related-entry">
+              <option value="">選択してください</option>
+            </select>
+          </div>
+        </div>
+
+        <button type="submit" id="submit-btn">追加</button>
+      </form>
+
+      <table id="entries-table">
+        <thead>
+          <tr>
+            <th>日付</th>
+            <th>金額</th>
+            <th>誰に/誰から</th>
+            <th>種別</th>
+            <th>関連</th>
+            <th>操作</th>
+          </tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+    </section>
+  </main>
+
+  <script defer src="../js/cashbook.js"></script>
+</body>
+
+</html>
